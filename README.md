@@ -1,4 +1,4 @@
-# AAML (Advanced/Another Abstract Markup Language)
+# AAM (Abstract Alias Mapping)
 
 A robust and lightweight configuration parser for Rust that supports simple key-value pairs, recursive dependency resolution, and bidirectional lookups. Designed for applications that need flexible configuration files with references and aliases.
 
