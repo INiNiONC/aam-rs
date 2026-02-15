@@ -10,9 +10,13 @@ pub struct AAML {
 }
 
 impl AAML {
-    pub fn parse(content: &str) -> Result<Self, AamlError> {
-        let mut map = HashMap::with_capacity(content.lines().count());
+    pub fn new() -> AAML {
+        AAML {
+            map: HashMap::new(),
+        }
+    }
 
+    pub fn merge_content(&mut self, content: &str) -> Result<(), AamlError> {
         for (index, line) in content.lines().enumerate() {
             let clean_line = Self::strip_comment(line).trim();
 
@@ -38,7 +42,7 @@ impl AAML {
                     }
                 }
 
-                map.insert(key.to_string(), val.to_string());
+                self.map.insert(key.to_string(), val.to_string());
             } else {
                 return Err(AamlError::ParseError {
                     line: index + 1,
@@ -47,8 +51,16 @@ impl AAML {
                 });
             }
         }
+        Ok(())
+    }
 
-        Ok(AAML { map })
+    pub fn merge_file<P: AsRef<Path>>(&mut self, file_path: P) -> Result<(), AamlError> {
+        let content = fs::read_to_string(file_path)?;
+        self.merge_content(&content)
+    }
+
+    pub fn parse(content: &str) -> Result<Self, AamlError> {
+        let mut aaml = AAML::new();
     }
 
     pub fn load<P: AsRef<Path>>(file_path: P) -> Result<Self, AamlError> {
