@@ -1,4 +1,5 @@
 use std::fmt::Display;
+use std::io;
 use std::ops::Deref;
 use std::path::Path;
 
@@ -13,12 +14,21 @@ impl AAMBuilder {
         }
     }
 
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            buffer: String::with_capacity(capacity),
+        }
+    }
+
     pub fn add_line(&mut self, key: &str, value: &str) {
-        let line = format!("{} = {}", key, value);
         if !self.buffer.is_empty() {
             self.buffer.push('\n');
         }
-        self.buffer.push_str(&*line);
+
+        self.buffer.push_str(key);
+        self.buffer.push_str(" = ");
+
+        self.buffer.push_str(value);
     }
 
     pub fn add_raw(&mut self, raw_line: &str) {
@@ -27,9 +37,16 @@ impl AAMBuilder {
         }
         self.buffer.push_str(raw_line);
     }
+    pub fn to_file<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
+        std::fs::write(path, self.buffer.as_bytes())
+    }
 
-    pub fn to_file<P: AsRef<Path>>(&self, path: P) {
-        std::fs::write(path, self.buffer.as_bytes()).unwrap();
+    pub fn build(self) -> String {
+        self.buffer
+    }
+
+    pub fn as_string(&self) -> String {
+        self.buffer.clone()
     }
 }
 

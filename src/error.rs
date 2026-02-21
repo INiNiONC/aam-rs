@@ -10,6 +10,11 @@ pub enum AamlError {
         details: String,
     },
     NotFound(String),
+    InvalidValue(String),
+    InvalidType {
+        type_name: String,
+        details: String,
+    },
 }
 
 impl fmt::Display for AamlError {
@@ -20,6 +25,10 @@ impl fmt::Display for AamlError {
                 write!(f, "Parse Error at line {}: '{}'. Reason: {}", line, content, details)
             }
             AamlError::NotFound(key) => write!(f, "Key not found: '{}'", key),
+            AamlError::InvalidValue(msg) => write!(f, "Invalid value: {}", msg),
+            AamlError::InvalidType { type_name, details } => {
+                write!(f, "Invalid type '{}': {}", type_name, details)
+            }
         }
     }
 }
